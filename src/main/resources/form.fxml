@@ -33,21 +33,22 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <HBox spacing="10.0">
-               <children>
-                  <Circle fill="#ff2a1f" radius="10.0" stroke="BLACK" strokeType="INSIDE" HBox.hgrow="NEVER" />
-                  <Circle fill="#ff2a1f" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
-                  <Circle fill="#ff2a1f" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
-                  <Region HBox.hgrow="ALWAYS" />
-                  <Button fx:id="statusButton" mnemonicParsing="false" onAction="#statusButtonClicked" text="Status" />
-                  <Button alignment="CENTER" mnemonicParsing="false" text="Start" textAlignment="CENTER" />
-                  <Button alignment="CENTER" mnemonicParsing="false" text="Stop" textAlignment="CENTER" />
-                  <Button fx:id="restartButton" alignment="CENTER" mnemonicParsing="false" onAction="#restartButtonClicked" text="Restart" textAlignment="CENTER" />
-               </children>
-               <VBox.margin>
-                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-               </VBox.margin>
-            </HBox>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
+               <items>
+                  <HBox spacing="10.0">
+                     <children>
+                        <Circle fill="#ff2a1f" radius="10.0" stroke="BLACK" strokeType="INSIDE" HBox.hgrow="NEVER" />
+                        <Circle fill="#ff2a1f" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+                        <Circle fill="#ff2a1f" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="statusButton" mnemonicParsing="false" onAction="#statusButtonClicked" text="Status" />
+                        <Button alignment="CENTER" mnemonicParsing="false" text="Start" textAlignment="CENTER" />
+                        <Button alignment="CENTER" mnemonicParsing="false" text="Stop" textAlignment="CENTER" />
+                        <Button fx:id="restartButton" alignment="CENTER" mnemonicParsing="false" onAction="#restartButtonClicked" text="Restart" textAlignment="CENTER" />
+                     </children>
+                  </HBox>
+               </items>
+            </ToolBar>
          </children>
       </VBox>
    </top>
@@ -72,38 +73,43 @@
         </panes>
       </Accordion>
    </left>
-   <center>
-      <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-        <tabs>
-          <Tab text="Untitled Tab 1">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <TableView fx:id="modulesTable" layoutX="54.0" layoutY="-22.0" prefHeight="135.0" prefWidth="398.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                     </children>
-                  </AnchorPane>
-            </content>
-          </Tab>
-          <Tab text="Untitled Tab 2">
-            <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-            </content>
-          </Tab>
-        </tabs>
-      </TabPane>
-   </center>
    <bottom>
-      <ScrollPane fx:id="debugConsoleScrollPane" fitToHeight="true" fitToWidth="true" prefViewportHeight="200.0" prefViewportWidth="884.0">
-         <content>
-            <TextFlow fx:id="debugConsole" prefHeight="200.0" prefWidth="200.0" style="-fx-border-width: 1px; -fx-border-color: #aaa; -fx-background-color: #efefef;" BorderPane.alignment="CENTER">
-               <padding>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-               </padding>
-               <BorderPane.margin>
-                  <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
-               </BorderPane.margin>
-            </TextFlow>
-         </content>
-      </ScrollPane>
+      <TabPane>
+         <tabs>
+            <Tab text="Debug Console">
+               <content>
+                  <ScrollPane fx:id="debugConsoleScrollPane" fitToHeight="true" fitToWidth="true" prefViewportHeight="200.0" prefViewportWidth="884.0">
+                     <content>
+                        <TextFlow fx:id="debugConsole" prefHeight="200.0" prefWidth="200.0" style="-fx-border-width: 1px; -fx-border-color: #aaa; -fx-background-color: #efefef;" BorderPane.alignment="CENTER">
+                           <padding>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </padding>
+                           <BorderPane.margin>
+                              <Insets bottom="8.0" left="8.0" right="8.0" top="8.0" />
+                           </BorderPane.margin>
+                        </TextFlow>
+                     </content>
+                  </ScrollPane>
+               </content>
+            </Tab>
+            <Tab text="Error log">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              </content>
+            </Tab>
+            <Tab text="Access log">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+               </content>
+            </Tab>
+         </tabs>
+      </TabPane>
    </bottom>
+   <center>
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <TableView fx:id="modulesTable" prefHeight="398.0" prefWidth="698.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         </children>
+      </AnchorPane>
+   </center>
 </BorderPane>
