@@ -3,17 +3,18 @@ package net.ovoice.apachegui;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 
+import java.io.IOException;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
-/**
- * Created by peter on 30.07.16.
- */
 public class AG_FXform implements Initializable {
     private final ApacheServer apacheServer;
     @FXML
@@ -33,6 +34,9 @@ public class AG_FXform implements Initializable {
 
     @FXML
     public javafx.scene.control.ScrollPane debugConsoleScrollPane;
+
+    @FXML
+    public TableView<ApacheModule> modulesTable;
 
     public void d(String s, int newLine) {
         if (newLine == 1) {
@@ -68,9 +72,32 @@ public class AG_FXform implements Initializable {
         d(output, 1);
     }
 
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         debugConsole.setMaxHeight(200);
         debugConsole.maxHeight(200);
+        setupModulesTable();
+
+
+    }
+
+    private void setupModulesTable() {
+        TableColumn nameCol = new TableColumn("Name");
+        nameCol.setMinWidth(200);
+        nameCol.setCellValueFactory(
+                new PropertyValueFactory<ApacheModule, String>("name"));
+
+        TableColumn enabledCol = new TableColumn("Enabled");
+        enabledCol.setMinWidth(200);
+        enabledCol.setCellValueFactory(
+                new PropertyValueFactory<ApacheModule, Boolean>("enabled"));
+
+        try {
+            modulesTable.setItems(ApacheServer.getApacheModules());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        modulesTable.getColumns().addAll(nameCol, enabledCol);
     }
 }

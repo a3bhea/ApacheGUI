@@ -13,7 +13,6 @@ public class AG_Runtime {
     }
 
     public AG_Runtime() {
-        System.out.println(">>> AG_Runtime initialized");
 
     }
 

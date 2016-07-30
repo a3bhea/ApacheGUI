@@ -1,8 +1,12 @@
 package net.ovoice.apachegui;
 
-/**
- * Created by peter on 29.07.16.
- */
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class ApacheServer {
 
     public String name;
@@ -32,5 +36,20 @@ public class ApacheServer {
         String[] agCmd = {"service", "apache2", "status"};
         lastCmd = agCmd;
         return agRuntime.exec(agCmd);
+    }
+
+
+    public static ObservableList<ApacheModule> getApacheModules() throws IOException {
+        ObservableList<ApacheModule> list = FXCollections.observableArrayList();
+
+        Files.walk(Paths.get("/usr/lib/apache2/modules/")).forEach(filePath -> {
+            if (Files.isRegularFile(filePath)) {
+                if(filePath.toString().endsWith(".so")){
+                    String fileName = filePath.getFileName().toString();
+                    list.add(new ApacheModule(fileName));
+                }
+            }
+        });
+        return list;
     }
 }
