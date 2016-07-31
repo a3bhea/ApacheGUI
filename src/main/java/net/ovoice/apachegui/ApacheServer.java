@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 public class ApacheServer {
 
     public String name;
-    public HashMap<String, Boolean> enabledModules = new HashMap<String, Boolean>();
+    public HashMap<String, HashMap<String, String>> enabledModules = new HashMap<String, HashMap<String, String>>();
     private AG_Runtime agRuntime;
     private String[] lastCmd;
 
@@ -25,7 +25,6 @@ public class ApacheServer {
     public void setName(String name) {
         this.name = name;
     }
-
 
     public String getName() {
         return name;
@@ -64,18 +63,35 @@ public class ApacheServer {
             if (Files.isRegularFile(filePath)) {
                 if (filePath.toString().endsWith(".so")) {
                     String fileName = filePath.getFileName().toString();
-                    list.add(new ApacheModule(fileName, filePath, moduleIsEnabled(filePath)));
+                    list.add(new ApacheModule(fileName, filePath, moduleIsEnabled(filePath), getModuleName(filePath), getModuleDotLoadFilePath(filePath)));
                 }
             }
         });
         return list;
     }
 
+    private String getModuleName(Path modulePath) {
+        String sModulePath = String.valueOf(modulePath);
+        if (enabledModules.containsKey(sModulePath)) {
+            return enabledModules.get(sModulePath).get("moduleName");
+        }
+        return "";
+    }
+
+
+    private String getModuleDotLoadFilePath(Path modulePath) {
+        String sModulePath = String.valueOf(modulePath);
+        if (enabledModules.containsKey(sModulePath)) {
+            return enabledModules.get(sModulePath).get("dotLoadFilePath");
+        }
+        return "";
+    }
+
     private Boolean moduleIsEnabled(Path modulePath) {
         Boolean isEnabled = false;
         String sModulePath = String.valueOf(modulePath);
         if (enabledModules.containsKey(sModulePath)) {
-            if (enabledModules.get(sModulePath) == true)
+            if (enabledModules.get(sModulePath).get("isEnabled") == "true")
                 isEnabled = true;
         }
         return isEnabled;
@@ -108,7 +124,11 @@ public class ApacheServer {
                 if (m.find()) {
                     String moduleName = m.group(1); // example: mod_php5
                     String modulePath = m.group(2); // example: /usr/lib/apache2/modules/libphp5.so
-                    enabledModules.put(String.valueOf(modulePath), true);
+                    HashMap<String, String> moduleData = new HashMap<String, String>();
+                    moduleData.put("isEnabled", String.valueOf(true));
+                    moduleData.put("moduleName", moduleName);
+                    moduleData.put("dotLoadFilePath", String.valueOf(filePath));
+                    enabledModules.put(String.valueOf(modulePath), moduleData);
                 }
             });
         } catch (IOException e) {

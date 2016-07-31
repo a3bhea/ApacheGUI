@@ -90,16 +90,17 @@ public class AG_FXform implements Initializable {
         debugConsole.setMaxHeight(200);
         debugConsole.maxHeight(200);
         setupModulesTable();
+
     }
 
     private void setupModulesTable() {
-        TableColumn nameCol = new TableColumn("Name");
+        TableColumn nameCol = new TableColumn("File");
         nameCol.setMinWidth(200);
         nameCol.setCellValueFactory(
                 new PropertyValueFactory<ApacheModule, String>("name"));
 
         TableColumn enabledCol = new TableColumn("Enabled");
-        enabledCol.setMinWidth(200);
+        enabledCol.setMinWidth(100);
         enabledCol.setCellValueFactory(
                 new PropertyValueFactory<ApacheModule, Boolean>("enabled"));
 
@@ -108,12 +109,22 @@ public class AG_FXform implements Initializable {
         pathCol.setCellValueFactory(
                 new PropertyValueFactory<ApacheModule, String>("path"));
 
+        TableColumn modNameCol = new TableColumn("Module");
+        modNameCol.setMinWidth(200);
+        modNameCol.setCellValueFactory(
+                new PropertyValueFactory<ApacheModule, String>("moduleName"));
+
+        TableColumn modDotLoadFilePath = new TableColumn(".load file");
+        modDotLoadFilePath.setMinWidth(400);
+        modDotLoadFilePath.setCellValueFactory(
+                new PropertyValueFactory<ApacheModule, String>("dotLoadFilePath"));
+
         try {
             modulesTable.setItems(apacheServer.getApacheModules());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        modulesTable.getColumns().addAll(nameCol, enabledCol, pathCol);
+        modulesTable.getColumns().addAll(nameCol, modNameCol,enabledCol, pathCol, modDotLoadFilePath);
 
 //        Highlight row
 //        highlightRows();

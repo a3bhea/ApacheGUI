@@ -9,27 +9,13 @@ import java.nio.file.Path;
 
 public class ApacheModule {
     private final SimpleStringProperty path;
+    private final SimpleStringProperty dotLoadFilePath;
     public StringProperty name;
+    public StringProperty moduleName;
     public BooleanProperty enabled = new SimpleBooleanProperty(false);
-
-    public String getPath() {
-        return path.get();
-    }
-
-    public String getName() {
-        return name.get();
-    }
-
-    public void setName(String name) {
-        this.name.set(name);
-    }
 
     public boolean isEnabled() {
         return enabled.get();
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled.set(enabled);
     }
 
     public final StringProperty nameProperty() {
@@ -40,10 +26,24 @@ public class ApacheModule {
         return enabled;
     }
 
-    public ApacheModule(String name, Path path, Boolean isEnabled) {
+    public final StringProperty moduleNameProperty() {
+        return moduleName;
+    }
+
+    public final StringProperty dotLoadFilePathProperty() {
+        return dotLoadFilePath;
+    }
+
+    public final StringProperty pathProperty() {
+        return path;
+    }
+
+    public ApacheModule(String name, Path path, Boolean isEnabled, String moduleName, String dotLoadFilePath) {
         this.name = new SimpleStringProperty(name);
+        this.moduleName = new SimpleStringProperty(moduleName);
         this.path = new SimpleStringProperty(String.valueOf(path));
         this.enabled = new SimpleBooleanProperty(isEnabled);
+        this.dotLoadFilePath = new SimpleStringProperty(dotLoadFilePath);
     }
 
 
