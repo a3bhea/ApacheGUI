@@ -1,14 +1,15 @@
 package net.ovoice.apachegui;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.net.URL;
@@ -89,25 +90,64 @@ public class AG_FXform implements Initializable {
         debugConsole.maxHeight(200);
         setupModulesTable();
 
-
     }
 
     private void setupModulesTable() {
-        TableColumn nameCol = new TableColumn("Name");
+        TableColumn nameCol = new TableColumn("File");
         nameCol.setMinWidth(200);
-        nameCol.setCellValueFactory(
-                new PropertyValueFactory<ApacheModule, String>("name"));
+        nameCol.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("name"));
 
         TableColumn enabledCol = new TableColumn("Enabled");
-        enabledCol.setMinWidth(200);
-        enabledCol.setCellValueFactory(
-                new PropertyValueFactory<ApacheModule, Boolean>("enabled"));
+        enabledCol.setMinWidth(100);
+        enabledCol.setCellValueFactory(new PropertyValueFactory<ApacheModule, Boolean>("enabled"));
+        renderModuleEnabledCell(enabledCol);
+
+        TableColumn pathCol = new TableColumn("Path");
+        pathCol.setMinWidth(400);
+        pathCol.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("path"));
+
+        TableColumn modNameCol = new TableColumn("Module");
+        modNameCol.setMinWidth(200);
+        modNameCol.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("moduleName"));
+
+        TableColumn modDotLoadFilePath = new TableColumn(".load file");
+        modDotLoadFilePath.setMinWidth(400);
+        modDotLoadFilePath.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("dotLoadFilePath"));
 
         try {
-            modulesTable.setItems(ApacheServer.getApacheModules());
+            modulesTable.setItems(apacheServer.getApacheModules());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        modulesTable.getColumns().addAll(nameCol, enabledCol);
+        modulesTable.getColumns().addAll(nameCol, modNameCol, enabledCol, pathCol, modDotLoadFilePath);
+    }
+
+    private void renderModuleEnabledCell(TableColumn enabledCol) {
+        enabledCol.setCellFactory(column -> {
+            return new TableCell<ApacheModule, Boolean>() {
+                @Override
+                protected void updateItem(Boolean item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) {
+                        setText(null);
+                        setStyle("");
+                    } else {
+                        ToggleButton btn = new ToggleButton();
+                        String val = item ? "enabled" : "disabled";
+                        btn.setText(val);
+                        setGraphic(btn);
+                        if (!item) {
+                            btn.setSelected(false);
+                            btn.setStyle("-fx-background-color: dimgray");
+                            btn.setTextFill(Color.WHITE);
+                        } else {
+                            btn.setSelected(true);
+                            btn.setStyle("-fx-background-color: green");
+                            btn.setTextFill(Color.WHITE);
+                        }
+                    }
+                }
+            };
+        });
     }
 }

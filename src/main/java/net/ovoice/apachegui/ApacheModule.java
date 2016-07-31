@@ -5,14 +5,17 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-public class ApacheModule {
-    public StringProperty name;
-    public BooleanProperty enabled = new SimpleBooleanProperty(false);
-    private String[] lastCmd;
-    private AG_Runtime agRuntime = new AG_Runtime();
+import java.nio.file.Path;
 
-    public ApacheModule(String name) {
-        this.name = new SimpleStringProperty(name);
+public class ApacheModule {
+    private final SimpleStringProperty path;
+    private final SimpleStringProperty dotLoadFilePath;
+    public StringProperty name;
+    public StringProperty moduleName;
+    public BooleanProperty enabled = new SimpleBooleanProperty(false);
+
+    public boolean isEnabled() {
+        return enabled.get();
     }
 
     public final StringProperty nameProperty() {
@@ -20,8 +23,28 @@ public class ApacheModule {
     }
 
     public final BooleanProperty enabledProperty() {
-        // Read apache.conf
-
         return enabled;
     }
+
+    public final StringProperty moduleNameProperty() {
+        return moduleName;
+    }
+
+    public final StringProperty dotLoadFilePathProperty() {
+        return dotLoadFilePath;
+    }
+
+    public final StringProperty pathProperty() {
+        return path;
+    }
+
+    public ApacheModule(String name, Path path, Boolean isEnabled, String moduleName, String dotLoadFilePath) {
+        this.name = new SimpleStringProperty(name);
+        this.moduleName = new SimpleStringProperty(moduleName);
+        this.path = new SimpleStringProperty(String.valueOf(path));
+        this.enabled = new SimpleBooleanProperty(isEnabled);
+        this.dotLoadFilePath = new SimpleStringProperty(dotLoadFilePath);
+    }
+
+
 }
