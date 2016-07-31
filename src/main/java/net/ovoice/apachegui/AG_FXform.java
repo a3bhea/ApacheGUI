@@ -1,11 +1,10 @@
 package net.ovoice.apachegui;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -96,62 +95,59 @@ public class AG_FXform implements Initializable {
     private void setupModulesTable() {
         TableColumn nameCol = new TableColumn("File");
         nameCol.setMinWidth(200);
-        nameCol.setCellValueFactory(
-                new PropertyValueFactory<ApacheModule, String>("name"));
+        nameCol.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("name"));
 
         TableColumn enabledCol = new TableColumn("Enabled");
         enabledCol.setMinWidth(100);
-        enabledCol.setCellValueFactory(
-                new PropertyValueFactory<ApacheModule, Boolean>("enabled"));
+        enabledCol.setCellValueFactory(new PropertyValueFactory<ApacheModule, Boolean>("enabled"));
+        renderModuleEnabledCell(enabledCol);
 
         TableColumn pathCol = new TableColumn("Path");
         pathCol.setMinWidth(400);
-        pathCol.setCellValueFactory(
-                new PropertyValueFactory<ApacheModule, String>("path"));
+        pathCol.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("path"));
 
         TableColumn modNameCol = new TableColumn("Module");
         modNameCol.setMinWidth(200);
-        modNameCol.setCellValueFactory(
-                new PropertyValueFactory<ApacheModule, String>("moduleName"));
+        modNameCol.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("moduleName"));
 
         TableColumn modDotLoadFilePath = new TableColumn(".load file");
         modDotLoadFilePath.setMinWidth(400);
-        modDotLoadFilePath.setCellValueFactory(
-                new PropertyValueFactory<ApacheModule, String>("dotLoadFilePath"));
+        modDotLoadFilePath.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("dotLoadFilePath"));
 
         try {
             modulesTable.setItems(apacheServer.getApacheModules());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        modulesTable.getColumns().addAll(nameCol, modNameCol,enabledCol, pathCol, modDotLoadFilePath);
-
-//        Highlight row
-//        highlightRows();
+        modulesTable.getColumns().addAll(nameCol, modNameCol, enabledCol, pathCol, modDotLoadFilePath);
     }
 
-    private void highlightRows() {
-        modulesTable.setRowFactory(new Callback<TableView<ApacheModule>, TableRow<ApacheModule>>() {
-            @Override
-            public TableRow<ApacheModule> call(TableView<ApacheModule> param) {
-                return new TableRow<ApacheModule>() {
-                    @Override
-                    protected void updateItem(ApacheModule item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (item != null) {
-                            try {
-                                if (item.isEnabled() == true) {
-                                    getStyleClass().add("highlighted-row");
-                                } else {
-                                    getStyleClass().remove("highlighted-row");
-                                }
-                            } catch (NullPointerException ex) {
-                                ex.printStackTrace();
-                            }
+    private void renderModuleEnabledCell(TableColumn enabledCol) {
+        enabledCol.setCellFactory(column -> {
+            return new TableCell<ApacheModule, Boolean>() {
+                @Override
+                protected void updateItem(Boolean item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (item == null || empty) {
+                        setText(null);
+                        setStyle("");
+                    } else {
+                        ToggleButton btn = new ToggleButton();
+                        String val = item ? "enabled" : "disabled";
+                        btn.setText(val);
+                        setGraphic(btn);
+                        if (!item) {
+                            btn.setSelected(false);
+                            btn.setStyle("-fx-background-color: dimgray");
+                            btn.setTextFill(Color.WHITE);
+                        } else {
+                            btn.setSelected(true);
+                            btn.setStyle("-fx-background-color: green");
+                            btn.setTextFill(Color.WHITE);
                         }
                     }
-                };
-            }
+                }
+            };
         });
     }
 }
