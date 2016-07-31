@@ -4,11 +4,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.net.URL;
@@ -88,8 +90,6 @@ public class AG_FXform implements Initializable {
         debugConsole.setMaxHeight(200);
         debugConsole.maxHeight(200);
         setupModulesTable();
-
-
     }
 
     private void setupModulesTable() {
@@ -103,11 +103,44 @@ public class AG_FXform implements Initializable {
         enabledCol.setCellValueFactory(
                 new PropertyValueFactory<ApacheModule, Boolean>("enabled"));
 
+        TableColumn pathCol = new TableColumn("Path");
+        pathCol.setMinWidth(400);
+        pathCol.setCellValueFactory(
+                new PropertyValueFactory<ApacheModule, String>("path"));
+
         try {
-            modulesTable.setItems(ApacheServer.getApacheModules());
+            modulesTable.setItems(apacheServer.getApacheModules());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        modulesTable.getColumns().addAll(nameCol, enabledCol);
+        modulesTable.getColumns().addAll(nameCol, enabledCol, pathCol);
+
+//        Highlight row
+//        highlightRows();
+    }
+
+    private void highlightRows() {
+        modulesTable.setRowFactory(new Callback<TableView<ApacheModule>, TableRow<ApacheModule>>() {
+            @Override
+            public TableRow<ApacheModule> call(TableView<ApacheModule> param) {
+                return new TableRow<ApacheModule>() {
+                    @Override
+                    protected void updateItem(ApacheModule item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (item != null) {
+                            try {
+                                if (item.isEnabled() == true) {
+                                    getStyleClass().add("highlighted-row");
+                                } else {
+                                    getStyleClass().remove("highlighted-row");
+                                }
+                            } catch (NullPointerException ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    }
+                };
+            }
+        });
     }
 }

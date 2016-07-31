@@ -1,0 +1,6 @@
+.highlighted-row {
+    -fx-background-color: darkseagreen;
+    /*-fx-background-insets: 0, 1, 2;*/
+    /*-fx-background: -fx-accent;*/
+    /*-fx-text-fill: -fx-selection-bar-text;*/
+}
