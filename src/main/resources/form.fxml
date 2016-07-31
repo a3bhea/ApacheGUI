@@ -42,8 +42,8 @@
                         <Circle fill="#ff2a1f" radius="10.0" stroke="BLACK" strokeType="INSIDE" />
                         <Region HBox.hgrow="ALWAYS" />
                         <Button fx:id="statusButton" mnemonicParsing="false" onAction="#statusButtonClicked" text="Status" />
-                        <Button alignment="CENTER" mnemonicParsing="false" text="Start" textAlignment="CENTER" />
-                        <Button alignment="CENTER" mnemonicParsing="false" text="Stop" textAlignment="CENTER" />
+                        <Button fx:id="startButton" alignment="CENTER" mnemonicParsing="false" onAction="#startButtonClicked" text="Start" textAlignment="CENTER" />
+                        <Button fx:id="stopButton" alignment="CENTER" mnemonicParsing="false" onAction="#stopButtonClicked" text="Stop" textAlignment="CENTER" />
                         <Button fx:id="restartButton" alignment="CENTER" mnemonicParsing="false" onAction="#restartButtonClicked" text="Restart" textAlignment="CENTER" />
                      </children>
                   </HBox>
@@ -76,7 +76,7 @@
    <bottom>
       <TabPane>
          <tabs>
-            <Tab text="Debug Console">
+            <Tab closable="false" text="Debug Console">
                <content>
                   <ScrollPane fx:id="debugConsoleScrollPane" fitToHeight="true" fitToWidth="true" prefViewportHeight="200.0" prefViewportWidth="884.0">
                      <content>
@@ -92,14 +92,22 @@
                   </ScrollPane>
                </content>
             </Tab>
-            <Tab text="Error log">
-              <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-              </content>
+            <Tab closable="false" text="Error log">
+               <content>
+                  <ScrollPane fitToHeight="true" fitToWidth="true">
+                     <content>
+                        <TextFlow prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #efefef; -fx-border-width: 1; -fx-border-color: #aaa;" />
+                     </content>
+                  </ScrollPane>
+               </content>
             </Tab>
             <Tab text="Access log">
                <content>
-                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  <ScrollPane fitToHeight="true" fitToWidth="true" prefHeight="200.0" prefWidth="200.0">
+                     <content>
+                        <TextFlow prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #efefef; -fx-border-width: 1px; -fx-border-color: #aaa;" />
+                     </content>
+                  </ScrollPane>
                </content>
             </Tab>
          </tabs>

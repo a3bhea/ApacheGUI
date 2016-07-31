@@ -32,6 +32,18 @@ public class ApacheServer {
         return agRuntime.exec(agCmd);
     }
 
+    public String start() {
+        String[] agCmd = {"service", "apache2", "start"};
+        lastCmd = agCmd;
+        return agRuntime.exec(agCmd);
+    }
+
+    public String stop() {
+        String[] agCmd = {"service", "apache2", "stop"};
+        lastCmd = agCmd;
+        return agRuntime.exec(agCmd);
+    }
+
     public String status() {
         String[] agCmd = {"service", "apache2", "status"};
         lastCmd = agCmd;

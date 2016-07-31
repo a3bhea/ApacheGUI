@@ -67,6 +67,16 @@ public class AG_FXform implements Initializable {
         d(output);
     }
 
+    public void startButtonClicked() {
+        String output = apacheServer.start();
+        d(output);
+    }
+
+    public void stopButtonClicked() {
+        String output = apacheServer.stop();
+        d(output);
+    }
+
     public void statusButtonClicked() {
         String output = apacheServer.status();
         d(output, 1);
