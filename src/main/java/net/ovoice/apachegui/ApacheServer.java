@@ -17,6 +17,8 @@ public class ApacheServer {
     public HashMap<String, HashMap<String, String>> enabledModules = new HashMap<String, HashMap<String, String>>();
     private AG_Runtime agRuntime;
     private String[] lastCmd;
+    public static final String MODULES_ENABLED_DIR = "/etc/apache2/mods-enabled";
+    public static final String MODULES_AVAILABLE_DIR = "/etc/apache2/mods-available";
 
     public ApacheServer() {
         agRuntime = new AG_Runtime();
@@ -99,12 +101,18 @@ public class ApacheServer {
 
     private void getEnabledModules() {
         // Read /etc/apache2/mods-enabled/
-        String apacheModsEnabledDirectory = "/etc/apache2/mods-enabled";
+        buildModulesList(MODULES_ENABLED_DIR);
+
+        // Read /etc/apache2/mods-available/
+        buildModulesList(MODULES_AVAILABLE_DIR);
+    }
+
+    private void buildModulesList(String dir) {
         try {
-            Files.walk(Paths.get(apacheModsEnabledDirectory)).forEach(filePath -> {
+            Files.walk(Paths.get(dir)).forEach(filePath -> {
                 if (Files.isRegularFile(filePath)) {
                     if (filePath.toString().endsWith(".load")) {
-                        readModuleDotLoad(filePath);
+                        readModuleDotLoad(filePath, dir);
                     }
                 }
             });
@@ -113,7 +121,7 @@ public class ApacheServer {
         }
     }
 
-    private void readModuleDotLoad(Path filePath) {
+    private void readModuleDotLoad(Path filePath, String dir) {
         String pattern = "^(?!#).*LoadModule\\s+([a-zA-Z0-9_\\-]*)\\s+([a-zA-Z0-9_\\.\\-\\/]*).*$";
         Pattern r = Pattern.compile(pattern);
 
@@ -124,11 +132,19 @@ public class ApacheServer {
                 if (m.find()) {
                     String moduleName = m.group(1); // example: mod_php5
                     String modulePath = m.group(2); // example: /usr/lib/apache2/modules/libphp5.so
-                    HashMap<String, String> moduleData = new HashMap<String, String>();
-                    moduleData.put("isEnabled", String.valueOf(true));
-                    moduleData.put("moduleName", moduleName);
-                    moduleData.put("dotLoadFilePath", String.valueOf(filePath));
-                    enabledModules.put(String.valueOf(modulePath), moduleData);
+                    HashMap<String, String> moduleData = new HashMap<>();
+                    if (dir == MODULES_ENABLED_DIR) {
+                        moduleData.put("isEnabled", String.valueOf(true));
+                        moduleData.put("moduleName", moduleName);
+                        moduleData.put("dotLoadFilePath", String.valueOf(filePath));
+                        enabledModules.put(String.valueOf(modulePath), moduleData);
+                    }
+                    if ((dir == MODULES_AVAILABLE_DIR) && (!enabledModules.containsKey(String.valueOf(modulePath)))) {
+                        moduleData.put("isEnabled", String.valueOf(false));
+                        moduleData.put("moduleName", moduleName);
+                        moduleData.put("dotLoadFilePath", String.valueOf(filePath));
+                        enabledModules.put(String.valueOf(modulePath), moduleData);
+                    }
                 }
             });
         } catch (IOException e) {

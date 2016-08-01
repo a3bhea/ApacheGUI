@@ -11,6 +11,23 @@ public class ApacheModule {
     private final SimpleStringProperty path;
     private final SimpleStringProperty dotLoadFilePath;
     public StringProperty name;
+
+    public String getPath() {
+        return path.get();
+    }
+
+    public String getDotLoadFilePath() {
+        return dotLoadFilePath.get();
+    }
+
+    public String getName() {
+        return name.get();
+    }
+
+    public String getModuleName() {
+        return moduleName.get();
+    }
+
     public StringProperty moduleName;
     public BooleanProperty enabled = new SimpleBooleanProperty(false);
 
@@ -46,5 +63,11 @@ public class ApacheModule {
         this.dotLoadFilePath = new SimpleStringProperty(dotLoadFilePath);
     }
 
+    public void disable() {
+        System.out.println(">>> Disabling " + moduleName);
+    }
 
+    public void enable() {
+        System.out.println(">>> Enabling " + moduleName);
+    }
 }

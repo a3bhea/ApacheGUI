@@ -93,23 +93,28 @@ public class AG_FXform implements Initializable {
     }
 
     private void setupModulesTable() {
+        /* File */
         TableColumn nameCol = new TableColumn("File");
         nameCol.setMinWidth(200);
         nameCol.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("name"));
 
+        /* Enable/Disable */
         TableColumn enabledCol = new TableColumn("Enabled");
         enabledCol.setMinWidth(100);
         enabledCol.setCellValueFactory(new PropertyValueFactory<ApacheModule, Boolean>("enabled"));
         renderModuleEnabledCell(enabledCol);
 
+        /* Path to module file */
         TableColumn pathCol = new TableColumn("Path");
         pathCol.setMinWidth(400);
         pathCol.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("path"));
 
+        /* Module name */
         TableColumn modNameCol = new TableColumn("Module");
         modNameCol.setMinWidth(200);
         modNameCol.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("moduleName"));
 
+        /* .load file location */
         TableColumn modDotLoadFilePath = new TableColumn(".load file");
         modDotLoadFilePath.setMinWidth(400);
         modDotLoadFilePath.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("dotLoadFilePath"));
@@ -131,24 +136,34 @@ public class AG_FXform implements Initializable {
                     setText(null);
                     setStyle("");
                 } else {
+                    ApacheModule apacheModule = (ApacheModule) this.getTableRow().getItem();
+
+                    /* */
                     Button btn = new Button();
                     String val = item ? "enabled" : "disabled";
                     btn.setText(val);
-//                    btn.setOnAction(event -> {
-//                        btn.setText(String.valueOf((boolean) btn.getUserData()));
-//                    });
+
                     setGraphic(btn);
                     if (!item) {
-                        btn.setUserData(true);
                         btn.setStyle("-fx-base: salmon");
                         btn.setTextFill(Color.WHITE);
                     } else {
-                        btn.setUserData(false);
                         btn.setStyle("-fx-base: #009900");
                         btn.setTextFill(Color.WHITE);
                     }
+                    setupEnableButtonAction(apacheModule, btn);
                 }
             }
+        });
+    }
+
+    private void setupEnableButtonAction(ApacheModule apacheModule, Button btn) {
+    /* On click -> enable/disable module */
+        btn.setOnAction(event -> {
+            if (apacheModule.isEnabled())
+                apacheModule.disable();
+            else
+                apacheModule.enable();
         });
     }
 }
