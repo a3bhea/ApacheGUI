@@ -1,15 +1,15 @@
 package net.ovoice.apachegui;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.util.Callback;
 
 import java.io.IOException;
 import java.net.URL;
@@ -123,31 +123,32 @@ public class AG_FXform implements Initializable {
     }
 
     private void renderModuleEnabledCell(TableColumn enabledCol) {
-        enabledCol.setCellFactory(column -> {
-            return new TableCell<ApacheModule, Boolean>() {
-                @Override
-                protected void updateItem(Boolean item, boolean empty) {
-                    super.updateItem(item, empty);
-                    if (item == null || empty) {
-                        setText(null);
-                        setStyle("");
+        enabledCol.setCellFactory(column -> new TableCell<ApacheModule, Boolean>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null || empty) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    Button btn = new Button();
+                    String val = item ? "enabled" : "disabled";
+                    btn.setText(val);
+//                    btn.setOnAction(event -> {
+//                        btn.setText(String.valueOf((boolean) btn.getUserData()));
+//                    });
+                    setGraphic(btn);
+                    if (!item) {
+                        btn.setUserData(true);
+                        btn.setStyle("-fx-base: salmon");
+                        btn.setTextFill(Color.WHITE);
                     } else {
-                        ToggleButton btn = new ToggleButton();
-                        String val = item ? "enabled" : "disabled";
-                        btn.setText(val);
-                        setGraphic(btn);
-                        if (!item) {
-                            btn.setSelected(false);
-                            btn.setStyle("-fx-background-color: dimgray");
-                            btn.setTextFill(Color.WHITE);
-                        } else {
-                            btn.setSelected(true);
-                            btn.setStyle("-fx-background-color: green");
-                            btn.setTextFill(Color.WHITE);
-                        }
+                        btn.setUserData(false);
+                        btn.setStyle("-fx-base: #009900");
+                        btn.setTextFill(Color.WHITE);
                     }
                 }
-            };
+            }
         });
     }
 }
