@@ -157,6 +157,7 @@ public class AG_FXform implements Initializable {
         });
     }
 
+    /* */
     private void setupEnableButtonAction(ApacheModule apacheModule, Button btn) {
     /* On click -> enable/disable module */
         btn.setOnAction(event -> {
