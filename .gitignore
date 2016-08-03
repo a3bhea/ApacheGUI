@@ -12,3 +12,5 @@
 /src/test/
 /out/
 *.iml
+/src/main/target/
+/src/main/main.iml
