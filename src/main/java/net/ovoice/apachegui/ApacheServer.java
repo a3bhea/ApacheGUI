@@ -3,6 +3,7 @@ package net.ovoice.apachegui;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,6 +11,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.io.FilenameUtils;
 
 public class ApacheServer {
 
@@ -59,17 +62,28 @@ public class ApacheServer {
 
     public ObservableList<ApacheModule> getApacheModules() throws IOException {
         ObservableList<ApacheModule> list = FXCollections.observableArrayList();
+        enabledModules.clear();
         getEnabledModules();
 
         Files.walk(Paths.get("/usr/lib/apache2/modules/")).forEach(filePath -> {
             if (Files.isRegularFile(filePath)) {
                 if (filePath.toString().endsWith(".so")) {
                     String fileName = filePath.getFileName().toString();
-                    list.add(new ApacheModule(fileName, filePath, moduleIsEnabled(filePath), getModuleName(filePath), getModuleDotLoadFilePath(filePath)));
+                    list.add(new ApacheModule(fileName, filePath, moduleIsEnabled(filePath), getModuleName(filePath), getModuleDotLoadFilePath(filePath), getModuleDotConfFilePath(filePath)));
                 }
             }
         });
         return list;
+    }
+
+    private String getModuleDotConfFilePath(Path modulePath) {
+        String sModulePath = String.valueOf(modulePath);
+        if (enabledModules.containsKey(sModulePath)) {
+            if (enabledModules.get(sModulePath).containsKey("dotConfFilePath")) {
+                return enabledModules.get(sModulePath).get("dotConfFilePath");
+            }
+        }
+        return "";
     }
 
     private String getModuleName(Path modulePath) {
@@ -121,7 +135,9 @@ public class ApacheServer {
         }
     }
 
+    /* Check for LoadModule directive */
     private void readModuleDotLoad(Path filePath, String dir) {
+//        String pattern = "^#?.*LoadModule\\s+([a-zA-Z0-9_\\-]*)\\s+([a-zA-Z0-9_\\.\\-\\/]*).*$";
         String pattern = "^(?!#).*LoadModule\\s+([a-zA-Z0-9_\\-]*)\\s+([a-zA-Z0-9_\\.\\-\\/]*).*$";
         Pattern r = Pattern.compile(pattern);
 
@@ -137,12 +153,28 @@ public class ApacheServer {
                         moduleData.put("isEnabled", String.valueOf(true));
                         moduleData.put("moduleName", moduleName);
                         moduleData.put("dotLoadFilePath", String.valueOf(filePath));
+
+                        /* Check if there is .conf file */
+                        String fileNameWithoutExtension = FilenameUtils.removeExtension(String.valueOf(filePath.getFileName()));
+                        String dotConfFilePath = dir + "/" + fileNameWithoutExtension + ".conf";
+                        File dotConfFile = new File(dotConfFilePath);
+                        if (dotConfFile.exists() && !dotConfFile.isDirectory()) {
+                            System.out.println(dotConfFilePath);
+                            moduleData.put("dotConfFilePath", dotConfFilePath);
+                        }
                         enabledModules.put(String.valueOf(modulePath), moduleData);
                     }
                     if ((dir == MODULES_AVAILABLE_DIR) && (!enabledModules.containsKey(String.valueOf(modulePath)))) {
                         moduleData.put("isEnabled", String.valueOf(false));
                         moduleData.put("moduleName", moduleName);
                         moduleData.put("dotLoadFilePath", String.valueOf(filePath));
+                        /* Check if there is .conf file */
+                        String fileNameWithoutExtension = FilenameUtils.removeExtension(String.valueOf(filePath.getFileName()));
+                        String dotConfFilePath = dir + "/" + fileNameWithoutExtension + ".conf";
+                        File dotConfFile = new File(dotConfFilePath);
+                        if (dotConfFile.exists() && !dotConfFile.isDirectory()) {
+                            moduleData.put("dotConfFilePath", dotConfFilePath);
+                        }
                         enabledModules.put(String.valueOf(modulePath), moduleData);
                     }
                 }

@@ -119,12 +119,26 @@ public class AG_FXform implements Initializable {
         modDotLoadFilePath.setMinWidth(400);
         modDotLoadFilePath.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("dotLoadFilePath"));
 
+
+        /* .load file location */
+        TableColumn modDotConfFilePath = new TableColumn(".conf file");
+        modDotConfFilePath.setMinWidth(400);
+        modDotConfFilePath.setCellValueFactory(new PropertyValueFactory<ApacheModule, String>("dotConfFilePath"));
+
         try {
             modulesTable.setItems(apacheServer.getApacheModules());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        modulesTable.getColumns().addAll(nameCol, modNameCol, enabledCol, pathCol, modDotLoadFilePath);
+        modulesTable.getColumns().addAll(nameCol, modNameCol, enabledCol, pathCol, modDotLoadFilePath, modDotConfFilePath);
+    }
+
+    public void resetTableItems(){
+        try {
+            modulesTable.setItems(apacheServer.getApacheModules());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void renderModuleEnabledCell(TableColumn enabledCol) {
@@ -163,9 +177,9 @@ public class AG_FXform implements Initializable {
     /* On click -> enable/disable module */
         btn.setOnAction(event -> {
             if (apacheModule.isEnabled())
-                apacheModule.disable();
+                apacheModule.disable(this);
             else
-                apacheModule.enable();
+                apacheModule.enable(this);
         });
     }
 }

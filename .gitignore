@@ -12,3 +12,4 @@
 /src/test/
 /out/
 *.iml
+/src/main/target/
